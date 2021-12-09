@@ -109,9 +109,9 @@ int main(int argc, char **argv) {
   const char *out_file = 0; // stdout
   int op = -1;              // invalid op
   int verbosity = 0;        // quiet
-
+  int i;
   // Parse options
-  for (int i = 1; i < argc;) {
+  for (i = 1; i < argc;) {
     // no args
     const char *a = argv[i++];
     if (strcmp(a, "-h") == 0)
@@ -312,7 +312,8 @@ int main(int argc, char **argv) {
     }
 #endif
   }
-  for (size_t out_pos = 0; out_pos < out_size;) {
+  size_t out_pos;
+  for (out_pos = 0; out_pos < out_size;) {
     ptrdiff_t w = write(out_fd, out + out_pos, out_size - out_pos);
     if (w < 0) {
       perror("write");

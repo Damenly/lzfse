@@ -35,7 +35,7 @@ LIB_OBJS := $(OBJ_DIR)/lzfse_encode.o  $(OBJ_DIR)/lzfse_decode.o \
 CMD_OBJS := $(OBJ_DIR)/lzfse_main.o
 OBJS := $(LIB_OBJS) $(CMD_OBJS)
 
-CFLAGS := -Os -Wall -Wno-unknown-pragmas -Wno-unused-variable -DNDEBUG -D_POSIX_C_SOURCE -std=c99 -fvisibility=hidden
+CFLAGS := -Os -Wall -Wno-unknown-pragmas -Wno-unused-variable -DNDEBUG -D_POSIX_C_SOURCE -std=gnu89 -fvisibility=hidden
 
 all: $(LZFSE_LIB) $(LZFSE_CMD) $(OBJS)
 

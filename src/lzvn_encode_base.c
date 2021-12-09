@@ -23,9 +23,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #include "lzvn_encode_base.h"
 
-#if defined(_MSC_VER) && !defined(__clang__)
-#  define restrict __restrict
-#endif
+#define restrict
+
 
 // ===============================================================
 // Coarse/fine copy, non overlapping buffers
@@ -36,7 +35,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 static inline unsigned char *lzvn_copy64(unsigned char *restrict dst,
                                          const unsigned char *restrict src,
                                          size_t nbytes) {
-  for (size_t i = 0; i < nbytes; i += 8)
+  size_t i;
+  for (i = 0; i < nbytes; i += 8)
     store8(dst + i, load8(src + i));
   return dst + nbytes;
 }
@@ -47,7 +47,8 @@ static inline unsigned char *lzvn_copy64(unsigned char *restrict dst,
 static inline unsigned char *lzvn_copy8(unsigned char *restrict dst,
                                         const unsigned char *restrict src,
                                         size_t nbytes) {
-  for (size_t i = 0; i < nbytes; i++)
+  size_t i;
+  for (i = 0; i < nbytes; i++)
     dst[i] = src[i];
   return dst + nbytes;
 }
@@ -372,11 +373,14 @@ static inline void lzvn_init_table(lzvn_encoder_state *state) {
   uint32_t value = load4(state->src + index);
 
   lzvn_encode_entry_type e;
-  for (int i = 0; i < 4; i++) {
+  int i;
+
+  for (i = 0; i < 4; i++) {
     e.indices[i] = offset_to_s32(index);
     e.values[i] = value;
   }
-  for (int u = 0; u < LZVN_ENCODE_HASH_VALUES; u++)
+  int u;
+  for (u = 0; u < LZVN_ENCODE_HASH_VALUES; u++)
     state->table[u] = e; // fill entire table
 }
 
@@ -443,7 +447,8 @@ void lzvn_encode(lzvn_encoder_state *state) {
 
     // Check candidates in order (closest first)
     uint32_t diffs[4];
-    for (int k = 0; k < 4; k++)
+    int k;
+    for (k = 0; k < 4; k++)
       diffs[k] = e.values[k] ^ vi; // XOR, 0 if equal
     lzvn_offset ik;                // index
     lzvn_offset nk;                // match byte count

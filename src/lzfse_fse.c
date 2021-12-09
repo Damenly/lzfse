@@ -33,7 +33,9 @@ void fse_init_encoder_table(int nstates, int nsymbols,
                             fse_encoder_entry *__restrict t) {
   int offset = 0; // current offset
   int n_clz = __builtin_clz(nstates);
-  for (int i = 0; i < nsymbols; i++) {
+  int i;
+
+  for (i = 0; i < nsymbols; i++) {
     int f = (int)freq[i];
     if (f == 0)
       continue; // skip this symbol, no occurrences
@@ -61,7 +63,8 @@ int fse_init_decoder_table(int nstates, int nsymbols,
   assert(fse_check_freq(freq, nsymbols, nstates) == 0);
   int n_clz = __builtin_clz(nstates);
   int sum_of_freq = 0;
-  for (int i = 0; i < nsymbols; i++) {
+  int i, j, j0, k;
+  for (i = 0; i < nsymbols; i++) {
     int f = (int)freq[i];
     if (f == 0)
       continue; // skip this symbol, no occurrences
@@ -72,12 +75,12 @@ int fse_init_decoder_table(int nstates, int nsymbols,
       return -1;
     }
 
-    int k =
+    k =
         __builtin_clz(f) - n_clz; // shift needed to ensure N <= (F<<K) < 2*N
-    int j0 = ((2 * nstates) >> k) - f;
+    j0 = ((2 * nstates) >> k) - f;
 
     // Initialize all states S reached by this symbol: OFFSET <= S < OFFSET + F
-    for (int j = 0; j < f; j++) {
+    for (j = 0; j < f; j++) {
       fse_decoder_entry e;
 
       e.symbol = (uint8_t)i;
@@ -113,9 +116,10 @@ void fse_init_value_decoder_table(int nstates, int nsymbols,
                                   fse_value_decoder_entry *__restrict t) {
   assert(nsymbols <= 256);
   assert(fse_check_freq(freq, nsymbols, nstates) == 0);
-
+  int i, j;
   int n_clz = __builtin_clz(nstates);
-  for (int i = 0; i < nsymbols; i++) {
+
+  for (i = 0; i < nsymbols; i++) {
     int f = (int)freq[i];
     if (f == 0)
       continue; // skip this symbol, no occurrences
@@ -129,7 +133,7 @@ void fse_init_value_decoder_table(int nstates, int nsymbols,
     ei.vbase = symbol_vbase[i];
 
     // Initialize all states S reached by this symbol: OFFSET <= S < OFFSET + F
-    for (int j = 0; j < f; j++) {
+    for (j = 0; j < f; j++) {
       fse_value_decoder_entry e = ei;
 
       if (j < j0) {
@@ -148,8 +152,9 @@ void fse_init_value_decoder_table(int nstates, int nsymbols,
 
 // Remove states from symbols until the correct number of states is used.
 static void fse_adjust_freqs(uint16_t *freq, int overrun, int nsymbols) {
-  for (int shift = 3; overrun != 0; shift--) {
-    for (int sym = 0; sym < nsymbols; sym++) {
+  int shift, sym;
+  for (shift = 3; overrun != 0; shift--) {
+    for (sym = 0; sym < nsymbols; sym++) {
       if (freq[sym] > 1) {
         int n = (freq[sym] - 1) >> shift;
         if (n > overrun)
@@ -172,9 +177,10 @@ void fse_normalize_freq(int nstates, int nsymbols, const uint32_t *__restrict t,
   int max_freq_sym = 0;
   int shift = __builtin_clz(nstates) - 1;
   uint32_t highprec_step;
+  int i;
 
   // Compute the total number of symbol occurrences
-  for (int i = 0; i < nsymbols; i++)
+  for (i = 0; i < nsymbols; i++)
     s_count += t[i];
 
   if (s_count == 0)
@@ -182,7 +188,7 @@ void fse_normalize_freq(int nstates, int nsymbols, const uint32_t *__restrict t,
   else
     highprec_step = ((uint32_t)1 << 31) / s_count;
 
-  for (int i = 0; i < nsymbols; i++) {
+  for (i = 0; i < nsymbols; i++) {
 
     // Rescale the occurrence count to get the normalized frequency.
     // Round up if the fractional part is >= 0.5; otherwise round down.

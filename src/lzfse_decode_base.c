@@ -113,8 +113,8 @@ static inline int lzfse_decode_v1(lzfse_compressed_block_header_v1 *out,
   // No freq tables?
   if (src_end == src)
     return 0; // OK, freq tables were omitted
-
-  for (int i = 0; i < LZFSE_ENCODE_L_SYMBOLS + LZFSE_ENCODE_M_SYMBOLS +
+  int i;
+  for (i = 0; i < LZFSE_ENCODE_L_SYMBOLS + LZFSE_ENCODE_M_SYMBOLS +
                           LZFSE_ENCODE_D_SYMBOLS + LZFSE_ENCODE_LITERAL_SYMBOLS;
        i++) {
     // Refill accum, one byte at a time, until we reach end of header, or accum
@@ -234,11 +234,14 @@ static int lzfse_decode_lmd(lzfse_decoder_state *s) {
       //  careful path that applies a permutation to account for the
       //  possible overlap between source and destination if the distance
       //  is small.
-      if (D >= 8 || D >= M)
+      if (D >= 8 || D >= M) {
         copy(dst, dst - D, M);
-      else
-        for (size_t i = 0; i < M; i++)
+      }
+      else {
+	size_t i;
+        for (i = 0; i < M; i++)
           dst[i] = dst[i - D];
+      }
       dst += M;
     }
 
@@ -253,7 +256,8 @@ static int lzfse_decode_lmd(lzfse_decoder_state *s) {
       //  or there isn't; if there is, we copy the whole thing and
       //  update all the pointers and lengths to reflect the copy.
       if (L <= remaining_bytes) {
-        for (size_t i = 0; i < L; i++)
+	size_t i;
+        for (i = 0; i < L; i++)
           dst[i] = lit[i];
         dst += L;
         lit += L;
@@ -265,7 +269,8 @@ static int lzfse_decode_lmd(lzfse_decoder_state *s) {
       //  L, and report that the destination buffer is full. Note that
       //  we always write right up to the end of the destination buffer.
       else {
-        for (size_t i = 0; i < remaining_bytes; i++)
+	size_t i;
+        for (i = 0; i < remaining_bytes; i++)
           dst[i] = lit[i];
         dst += remaining_bytes;
         lit += remaining_bytes;
@@ -277,7 +282,8 @@ static int lzfse_decode_lmd(lzfse_decoder_state *s) {
       //  before finishing, we return to the caller indicating that
       //  the buffer is full.
       if (M <= remaining_bytes) {
-        for (size_t i = 0; i < M; i++)
+	size_t i;
+        for (i = 0; i < M; i++)
           dst[i] = dst[i - D];
         dst += M;
         remaining_bytes -= M;
@@ -291,7 +297,8 @@ static int lzfse_decode_lmd(lzfse_decoder_state *s) {
                  //
                  // But we still set M = 0, to maintain the post-condition.
       } else {
-        for (size_t i = 0; i < remaining_bytes; i++)
+	size_t i;
+        for (i = 0; i < remaining_bytes; i++)
           dst[i] = dst[i - D];
         dst += remaining_bytes;
         M -= remaining_bytes;
@@ -450,8 +457,8 @@ int lzfse_decode(lzfse_decoder_state *s) {
           fse_state state1 = header1.literal_state[1];
           fse_state state2 = header1.literal_state[2];
           fse_state state3 = header1.literal_state[3];
-
-          for (uint32_t i = 0; i < header1.n_literals; i += 4) // n_literals is multiple of 4
+	  uint32_t i;
+          for (i = 0; i < header1.n_literals; i += 4) // n_literals is multiple of 4
           {
 #if FSE_IOSTREAM_64
             if (fse_in_flush(&in, &buf, buf_start) != 0)

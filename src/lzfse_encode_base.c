@@ -120,7 +120,8 @@ lzfse_encode_v1_freq_table(lzfse_compressed_block_header_v2 *out,
                                           // will not be modified, so this code
                                           // will remain valid)
   uint8_t *dst = &(out->freq[0]);
-  for (int i = 0; i < LZFSE_ENCODE_L_SYMBOLS + LZFSE_ENCODE_M_SYMBOLS +
+  int i;
+  for (i = 0; i < LZFSE_ENCODE_L_SYMBOLS + LZFSE_ENCODE_M_SYMBOLS +
                           LZFSE_ENCODE_D_SYMBOLS + LZFSE_ENCODE_LITERAL_SYMBOLS;
        i++) {
     // Encode one value to accum
@@ -197,7 +198,8 @@ static int lzfse_encode_matches(lzfse_encoder_state *s) {
 
   // Encode previous distance
   uint32_t d_prev = 0;
-  for (uint32_t i = 0; i < s->n_matches; i++) {
+  uint32_t i;
+  for (i = 0; i < s->n_matches; i++) {
     uint32_t d = s->d_values[i];
     if (d == d_prev)
       s->d_values[i] = 0;
@@ -214,19 +216,19 @@ static int lzfse_encode_matches(lzfse_encoder_state *s) {
   // Update occurrence tables in all 4 streams (L,M,D,literals)
   uint32_t l_sum = 0;
   uint32_t m_sum = 0;
-  for (uint32_t i = 0; i < s->n_matches; i++) {
+  for (i = 0; i < s->n_matches; i++) {
     uint32_t l = s->l_values[i];
     l_sum += l;
     l_occ[l_base_from_value(l)]++;
   }
-  for (uint32_t i = 0; i < s->n_matches; i++) {
+  for (i = 0; i < s->n_matches; i++) {
     uint32_t m = s->m_values[i];
     m_sum += m;
     m_occ[m_base_from_value(m)]++;
   }
-  for (uint32_t i = 0; i < s->n_matches; i++)
+  for (i = 0; i < s->n_matches; i++)
     d_occ[d_base_from_value(s->d_values[i])]++;
-  for (uint32_t i = 0; i < s->n_literals; i++)
+  for (i = 0; i < s->n_literals; i++)
     literal_occ[s->literals[i]]++;
 
   // Make sure we have enough room for a _full_ V2 header
@@ -398,7 +400,8 @@ END:
 
     // Revert the d_prev encoding
     uint32_t d_prev = 0;
-    for (uint32_t i = 0; i < s->n_matches; i++) {
+    uint32_t i;
+    for (i = 0; i < s->n_matches; i++) {
       uint32_t d = s->d_values[i];
       if (d == 0)
         s->d_values[i] = d_prev;
@@ -590,12 +593,14 @@ static int lzfse_backend_end_of_stream(lzfse_encoder_state *s) {
 int lzfse_encode_init(lzfse_encoder_state *s) {
   const lzfse_match NO_MATCH = {0};
   lzfse_history_set line;
-  for (int i = 0; i < LZFSE_ENCODE_HASH_WIDTH; i++) {
+  int i;
+
+  for (i = 0; i < LZFSE_ENCODE_HASH_WIDTH; i++) {
     line.pos[i] = -4 * LZFSE_ENCODE_MAX_D_VALUE; // invalid pos
     line.value[i] = 0;
   }
   // Fill table
-  for (int i = 0; i < LZFSE_ENCODE_HASH_VALUES; i++)
+  for (i = 0; i < LZFSE_ENCODE_HASH_VALUES; i++)
     s->history_table[i] = line;
   s->pending = NO_MATCH;
   s->src_literal = 0;
@@ -626,9 +631,12 @@ int lzfse_encode_translate(lzfse_encoder_state *s, lzfse_offset delta) {
 
   // history_table positions, translated, and clamped to invalid pos
   int32_t invalidPos = -4 * LZFSE_ENCODE_MAX_D_VALUE;
-  for (int i = 0; i < LZFSE_ENCODE_HASH_VALUES; i++) {
+  int i;
+  for (i = 0; i < LZFSE_ENCODE_HASH_VALUES; i++) {
     int32_t *p = &(s->history_table[i].pos[0]);
-    for (int j = 0; j < LZFSE_ENCODE_HASH_WIDTH; j++) {
+    int j;
+
+    for (j = 0; j < LZFSE_ENCODE_HASH_WIDTH; j++) {
       lzfse_offset newPos = p[j] - delta; // translate
       p[j] = (int32_t)((newPos < invalidPos) ? invalidPos : newPos); // clamp
     }
@@ -662,11 +670,13 @@ int lzfse_encode_base(lzfse_encoder_state *s) {
     // Prepare next hash line (component 0 is the most recent) to prepare new
     // entries (stored later)
     {
+	    int k;
+
       newH.pos[0] = (int32_t)pos;
-      for (int k = 0; k < LZFSE_ENCODE_HASH_WIDTH - 1; k++)
+      for (k = 0; k < LZFSE_ENCODE_HASH_WIDTH - 1; k++)
         newH.pos[k + 1] = h.pos[k];
       newH.value[0] = x;
-      for (int k = 0; k < LZFSE_ENCODE_HASH_WIDTH - 1; k++)
+      for (k = 0; k < LZFSE_ENCODE_HASH_WIDTH - 1; k++)
         newH.value[k + 1] = h.value[k];
     }
 
@@ -677,8 +687,9 @@ int lzfse_encode_base(lzfse_encoder_state *s) {
     // Search best incoming match
     lzfse_match incoming = {.pos = pos, .ref = 0, .length = 0};
 
+    int k;
     // Check for matches.  We consider matches of length >= 4 only.
-    for (int k = 0; k < LZFSE_ENCODE_HASH_WIDTH; k++) {
+    for (k = 0; k < LZFSE_ENCODE_HASH_WIDTH; k++) {
       uint32_t d = h.value[k] ^ x;
       if (d)
         continue; // no 4 byte match
