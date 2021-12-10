@@ -29,8 +29,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 // Some symbols may have a 0 frequency.  In that case, they should not be
 // present in the data.
 void fse_init_encoder_table(int nstates, int nsymbols,
-                            const uint16_t *__restrict freq,
-                            fse_encoder_entry *__restrict t) {
+                            const uint16_t *freq,
+                            fse_encoder_entry *t) {
   int offset = 0; // current offset
   int n_clz = __builtin_clz(nstates);
   int i;
@@ -57,8 +57,8 @@ void fse_init_encoder_table(int nstates, int nsymbols,
 // Some symbols may have a 0 frequency.  In that case, they should not be
 // present in the data.
 int fse_init_decoder_table(int nstates, int nsymbols,
-                           const uint16_t *__restrict freq,
-                           int32_t *__restrict t) {
+                           const uint16_t *freq,
+                           int32_t *t) {
   assert(nsymbols <= 256);
   assert(fse_check_freq(freq, nsymbols, nstates) == 0);
   int n_clz = __builtin_clz(nstates);
@@ -110,10 +110,10 @@ int fse_init_decoder_table(int nstates, int nsymbols,
 // Some symbols may have a 0 frequency.  In that case, they should not be
 // present in the data.
 void fse_init_value_decoder_table(int nstates, int nsymbols,
-                                  const uint16_t *__restrict freq,
-                                  const uint8_t *__restrict symbol_vbits,
-                                  const int32_t *__restrict symbol_vbase,
-                                  fse_value_decoder_entry *__restrict t) {
+                                  const uint16_t *freq,
+                                  const uint8_t *symbol_vbits,
+                                  const int32_t *symbol_vbase,
+                                  fse_value_decoder_entry *t) {
   assert(nsymbols <= 256);
   assert(fse_check_freq(freq, nsymbols, nstates) == 0);
   int i, j;
@@ -169,8 +169,8 @@ static void fse_adjust_freqs(uint16_t *freq, int overrun, int nsymbols) {
 }
 
 // Normalize a table T[NSYMBOLS] of occurrences to FREQ[NSYMBOLS].
-void fse_normalize_freq(int nstates, int nsymbols, const uint32_t *__restrict t,
-                        uint16_t *__restrict freq) {
+void fse_normalize_freq(int nstates, int nsymbols, const uint32_t *t,
+                        uint16_t *freq) {
   uint32_t s_count = 0;
   int remaining = nstates; // must be signed; this may become < 0
   int max_freq = 0;

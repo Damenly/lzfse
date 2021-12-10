@@ -30,9 +30,9 @@ size_t lzfse_encode_scratch_size() {
   return (s1 > s2) ? s1 : s2; // max(lzfse,lzvn)
 }
 
-size_t lzfse_encode_buffer_with_scratch(uint8_t *__restrict dst_buffer, 
-                       size_t dst_size, const uint8_t *__restrict src_buffer,
-                       size_t src_size, void *__restrict scratch_buffer) {
+size_t lzfse_encode_buffer_with_scratch(uint8_t *dst_buffer, 
+                       size_t dst_size, const uint8_t *src_buffer,
+                       size_t src_size, void *scratch_buffer) {
   const size_t original_size = src_size;
 
   // If input is really really small, go directly to uncompressed buffer
@@ -140,9 +140,9 @@ try_uncompressed:
   return 0;
 }
 
-size_t lzfse_encode_buffer(uint8_t *__restrict dst_buffer, size_t dst_size,
-                           const uint8_t *__restrict src_buffer,
-                           size_t src_size, void *__restrict scratch_buffer) {
+size_t lzfse_encode_buffer(uint8_t *dst_buffer, size_t dst_size,
+                           const uint8_t *src_buffer,
+                           size_t src_size, void *scratch_buffer) {
   int has_malloc = 0;
   size_t ret = 0;
 

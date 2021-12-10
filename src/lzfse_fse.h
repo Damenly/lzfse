@@ -492,9 +492,9 @@ typedef struct {      // DO NOT REORDER THE FIELDS
  *  \c out.
  *  @note The caller must ensure we have enough bits available in the output
  *  stream accumulator. */
-FSE_INLINE void fse_encode(fse_state *__restrict pstate,
-                           const fse_encoder_entry *__restrict encoder_table,
-                           fse_out_stream *__restrict out, uint8_t symbol) {
+FSE_INLINE void fse_encode(fse_state *pstate,
+                           const fse_encoder_entry *encoder_table,
+                           fse_out_stream *out, uint8_t symbol) {
   int s = *pstate;
   fse_encoder_entry e = encoder_table[symbol];
   int s0 = e.s0;
@@ -519,9 +519,9 @@ FSE_INLINE void fse_encode(fse_state *__restrict pstate,
  *  \c *pstate, \c in.
  *  @note The caller must ensure we have enough bits available in the input
  *  stream accumulator. */
-FSE_INLINE uint8_t fse_decode(fse_state *__restrict pstate,
-                              const int32_t *__restrict decoder_table,
-                              fse_in_stream *__restrict in) {
+FSE_INLINE uint8_t fse_decode(fse_state *pstate,
+                              const int32_t *decoder_table,
+                              fse_in_stream *in) {
   int32_t e = decoder_table[*pstate];
 
   // Update state from K bits of input + DELTA
@@ -537,9 +537,9 @@ FSE_INLINE uint8_t fse_decode(fse_state *__restrict pstate,
  * @note The caller must ensure we have enough bits available in the input
  * stream accumulator. */
 FSE_INLINE int32_t
-fse_value_decode(fse_state *__restrict pstate,
+fse_value_decode(fse_state *pstate,
                  const fse_value_decoder_entry *value_decoder_table,
-                 fse_in_stream *__restrict in) {
+                 fse_in_stream *in) {
   fse_value_decoder_entry entry = value_decoder_table[*pstate];
   uint32_t state_and_value_bits = (uint32_t)fse_in_pull(in, entry.total_bits);
   *pstate =
@@ -582,8 +582,8 @@ FSE_INLINE int fse_check_freq(const uint16_t *freq_table,
  * present in the data.
  */
 void fse_init_encoder_table(int nstates, int nsymbols,
-                            const uint16_t *__restrict freq,
-                            fse_encoder_entry *__restrict t);
+                            const uint16_t *freq,
+                            fse_encoder_entry *t);
 
 /*! @abstract Initialize decoder table \c t[nstates].
  *
@@ -602,8 +602,8 @@ void fse_init_encoder_table(int nstates, int nsymbols,
  * @return -1 on failure.
  */
 int fse_init_decoder_table(int nstates, int nsymbols,
-                           const uint16_t *__restrict freq,
-                           int32_t *__restrict t);
+                           const uint16_t *freq,
+                           int32_t *t);
 
 /*! @abstract Initialize value decoder table \c t[nstates].
  *
@@ -621,12 +621,12 @@ int fse_init_decoder_table(int nstates, int nsymbols,
  * present in the data.
  */
 void fse_init_value_decoder_table(int nstates, int nsymbols,
-                                  const uint16_t *__restrict freq,
-                                  const uint8_t *__restrict symbol_vbits,
-                                  const int32_t *__restrict symbol_vbase,
-                                  fse_value_decoder_entry *__restrict t);
+                                  const uint16_t *freq,
+                                  const uint8_t *symbol_vbits,
+                                  const int32_t *symbol_vbase,
+                                  fse_value_decoder_entry *t);
 
 /*! @abstract Normalize a table \c t[nsymbols] of occurrences to
  *  \c freq[nsymbols]. */
-void fse_normalize_freq(int nstates, int nsymbols, const uint32_t *__restrict t,
-                        uint16_t *__restrict freq);
+void fse_normalize_freq(int nstates, int nsymbols, const uint32_t *t,
+                        uint16_t *freq);

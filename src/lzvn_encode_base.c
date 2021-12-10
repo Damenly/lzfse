@@ -32,8 +32,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 /*! @abstract Copy at least \p nbytes bytes from \p src to \p dst, by blocks
  * of 8 bytes (may go beyond range). No overlap.
  * @return \p dst + \p nbytes. */
-static inline unsigned char *lzvn_copy64(unsigned char *restrict dst,
-                                         const unsigned char *restrict src,
+static inline unsigned char *lzvn_copy64(unsigned char *dst,
+                                         const unsigned char *src,
                                          size_t nbytes) {
   size_t i;
   for (i = 0; i < nbytes; i += 8)
@@ -44,8 +44,8 @@ static inline unsigned char *lzvn_copy64(unsigned char *restrict dst,
 /*! @abstract Copy exactly \p nbytes bytes from \p src to \p dst (respects range).
  * No overlap.
  * @return \p dst + \p nbytes. */
-static inline unsigned char *lzvn_copy8(unsigned char *restrict dst,
-                                        const unsigned char *restrict src,
+static inline unsigned char *lzvn_copy8(unsigned char *dst,
+                                        const unsigned char *src,
                                         size_t nbytes) {
   size_t i;
   for (i = 0; i < nbytes; i++)
@@ -538,9 +538,9 @@ void lzvn_encode(lzvn_encoder_state *state) {
 
 size_t lzvn_encode_scratch_size(void) { return LZVN_ENCODE_WORK_SIZE; }
 
-static size_t lzvn_encode_partial(void *__restrict dst, size_t dst_size,
-                                  const void *__restrict src, size_t src_size,
-                                  size_t *src_used, void *__restrict work) {
+static size_t lzvn_encode_partial(void *dst, size_t dst_size,
+                                  const void *src, size_t src_size,
+                                  size_t *src_used, void *work) {
   // Min size checks to avoid accessing memory outside buffers.
   if (dst_size < LZVN_ENCODE_MIN_DST_SIZE) {
     *src_used = 0;
@@ -586,9 +586,9 @@ static size_t lzvn_encode_partial(void *__restrict dst, size_t dst_size,
   return (size_t)(state.dst - state.dst_begin);
 }
 
-size_t lzvn_encode_buffer(void *__restrict dst, size_t dst_size,
-                          const void *__restrict src, size_t src_size,
-                          void *__restrict work) {
+size_t lzvn_encode_buffer(void *dst, size_t dst_size,
+                          const void *src, size_t src_size,
+                          void *work) {
   size_t src_used = 0;
   size_t dst_used =
       lzvn_encode_partial(dst, dst_size, src, src_size, &src_used, work);
