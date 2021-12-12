@@ -391,28 +391,6 @@ int lzfse_encode_base(lzfse_encoder_state *s);
 int lzfse_encode_finish(lzfse_encoder_state *s);
 int lzfse_decode(lzfse_decoder_state *s);
 
-// MARK: - LZVN encode/decode interfaces
-
-//  Minimum source buffer size for compression. Smaller buffers will not be
-//  compressed; the lzvn encoder will simply return.
-#define LZVN_ENCODE_MIN_SRC_SIZE ((size_t)8)
-
-//  Maximum source buffer size for compression. Larger buffers will be
-//  compressed partially.
-#define LZVN_ENCODE_MAX_SRC_SIZE ((size_t)0xffffffffU)
-
-//  Minimum destination buffer size for compression. No compression will take
-//  place if smaller.
-#define LZVN_ENCODE_MIN_DST_SIZE ((size_t)8)
-
-size_t lzvn_decode_scratch_size(void);
-size_t lzvn_encode_scratch_size(void);
-size_t lzvn_encode_buffer(void *dst, size_t dst_size,
-                          const void *src, size_t src_size,
-                          void *work);
-size_t lzvn_decode_buffer(void *dst, size_t dst_size,
-                          const void *src, size_t src_size);
-
 /*! @abstract Signed offset in buffers, stored on either 32 or 64 bits. */
 #if defined(_M_AMD64) || defined(__x86_64__) || defined(__arm64__)
 typedef int64_t lzvn_offset;
