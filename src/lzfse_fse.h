@@ -31,14 +31,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <stdlib.h>
 #include <string.h>
 
-//  Select between 32/64-bit I/O streams for FSE. Note that the FSE stream
-//  size need not match the word size of the machine, but in practice you
-//  want to use 64b streams on 64b systems for better performance.
-#if defined(_M_AMD64) || defined(__x86_64__) || defined(__arm64__)
-#define FSE_IOSTREAM_64 1
-#else
-#define FSE_IOSTREAM_64 0
-#endif
+#include "lzfse.h"
 
 #if defined(_MSC_VER) && !defined(__clang__)
 #  define FSE_INLINE __forceinline
@@ -47,14 +40,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #else
 #  define FSE_INLINE static inline __attribute__((__always_inline__))
 #endif
-
-// MARK: - Bit utils
-
-/*! @abstract Signed type used to represent bit count. */
-typedef int32_t fse_bit_count;
-
-/*! @abstract Unsigned type used to represent FSE state. */
-typedef uint16_t fse_state;
 
 // Mask the NBITS lsb of X. 0 <= NBITS < 64
 static inline uint64_t fse_mask_lsb64(uint64_t x, fse_bit_count nbits) {
@@ -130,36 +115,6 @@ FSE_INLINE uint32_t fse_extract_bits32(uint32_t x, fse_bit_count start,
   // Otherwise, shift and mask
   return fse_mask_lsb32(x >> start, nbits);
 }
-
-// MARK: - Bit stream
-
-// I/O streams
-// The streams can be shared between several FSE encoders/decoders, which is why
-// they are not in the state struct
-
-/*! @abstract Output stream, 64-bit accum. */
-typedef struct {
-  uint64_t accum;            // Output bits
-  fse_bit_count accum_nbits; // Number of valid bits in ACCUM, other bits are 0
-} fse_out_stream64;
-
-/*! @abstract Output stream, 32-bit accum. */
-typedef struct {
-  uint32_t accum;            // Output bits
-  fse_bit_count accum_nbits; // Number of valid bits in ACCUM, other bits are 0
-} fse_out_stream32;
-
-/*! @abstract Object representing an input stream. */
-typedef struct {
-  uint64_t accum;            // Input bits
-  fse_bit_count accum_nbits; // Number of valid bits in ACCUM, other bits are 0
-} fse_in_stream64;
-
-/*! @abstract Object representing an input stream. */
-typedef struct {
-  uint32_t accum;            // Input bits
-  fse_bit_count accum_nbits; // Number of valid bits in ACCUM, other bits are 0
-} fse_in_stream32;
 
 /*! @abstract Initialize an output stream object. */
 FSE_INLINE void fse_out_init64(fse_out_stream64 *s) {
@@ -421,48 +376,6 @@ FSE_INLINE uint32_t fse_in_pull32(fse_in_stream32 *s, fse_bit_count n) {
   return result;
 }
 
-// MARK: - Encode/Decode
-
-// Map to 32/64-bit implementations and types for I/O
-#if FSE_IOSTREAM_64
-
-typedef uint64_t fse_bits;
-typedef fse_out_stream64 fse_out_stream;
-typedef fse_in_stream64 fse_in_stream;
-#define fse_mask_lsb fse_mask_lsb64
-#define fse_extract_bits fse_extract_bits64
-#define fse_out_init fse_out_init64
-#define fse_out_flush fse_out_flush64
-#define fse_out_finish fse_out_finish64
-#define fse_out_push fse_out_push64
-#define fse_in_init fse_in_checked_init64
-#define fse_in_checked_init fse_in_checked_init64
-#define fse_in_flush fse_in_checked_flush64
-#define fse_in_checked_flush fse_in_checked_flush64
-#define fse_in_flush2(_unused, _parameters, _unused2) 0 /* nothing */
-#define fse_in_checked_flush2(_unused, _parameters)     /* nothing */
-#define fse_in_pull fse_in_pull64
-
-#else
-
-typedef uint32_t fse_bits;
-typedef fse_out_stream32 fse_out_stream;
-typedef fse_in_stream32 fse_in_stream;
-#define fse_mask_lsb fse_mask_lsb32
-#define fse_extract_bits fse_extract_bits32
-#define fse_out_init fse_out_init32
-#define fse_out_flush fse_out_flush32
-#define fse_out_finish fse_out_finish32
-#define fse_out_push fse_out_push32
-#define fse_in_init fse_in_checked_init32
-#define fse_in_checked_init fse_in_checked_init32
-#define fse_in_flush fse_in_checked_flush32
-#define fse_in_checked_flush fse_in_checked_flush32
-#define fse_in_flush2 fse_in_checked_flush32
-#define fse_in_checked_flush2 fse_in_checked_flush32
-#define fse_in_pull fse_in_pull32
-
-#endif
 
 /*! @abstract Entry for one symbol in the encoder table (64b). */
 typedef struct {
@@ -479,14 +392,6 @@ typedef struct {  // DO NOT REORDER THE FIELDS
   uint8_t symbol; // Emitted symbol
   int16_t delta;  // Signed increment used to compute next state (+bias)
 } fse_decoder_entry;
-
-/*! @abstract  Entry for one state in the value decoder table (64b). */
-typedef struct {      // DO NOT REORDER THE FIELDS
-  uint8_t total_bits; // state bits + extra value bits = shift for next decode
-  uint8_t value_bits; // extra value bits
-  int16_t delta;      // state base (delta)
-  int32_t vbase;      // value base
-} fse_value_decoder_entry;
 
 /*! @abstract Encode SYMBOL using the encoder table, and update \c *pstate,
  *  \c out.
