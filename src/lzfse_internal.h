@@ -27,11 +27,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 //  break the compressor, or result in a compressed data format that is
 //  incompatible.
 
-#include "lzfse_fse.h"
-#include "lzfse_tunables.h"
 #include <limits.h>
 #include <stddef.h>
 #include <stdint.h>
+
+#include "lzvn.h"
+#include "lzfse_fse.h"
+#include "lzfse_tunables.h"
+
 
 #if defined(_MSC_VER) && !defined(__clang__)
 #  define LZFSE_INLINE __forceinline
@@ -238,13 +241,6 @@ typedef struct {
 //  Decoder state object for uncompressed blocks.
 typedef struct { uint32_t n_raw_bytes; } uncompressed_block_decoder_state;
 
-/*! @abstract Decoder state object for lzvn-compressed blocks. */
-typedef struct {
-  uint32_t n_raw_bytes;
-  uint32_t n_payload_bytes;
-  uint32_t d_prev;
-} lzvn_compressed_block_decoder_state;
-
 /*! @abstract Decoder state object. */
 typedef struct {
   //  Pointer to next byte to read from source buffer (this is advanced as we
@@ -373,16 +369,6 @@ typedef struct {
 } __attribute__((__packed__, __aligned__(1)))
 lzfse_compressed_block_header_v2;
 
-/*! @abstract LZVN compressed block header. */
-typedef struct {
-  //  Magic number, always LZFSE_COMPRESSEDLZVN_BLOCK_MAGIC.
-  uint32_t magic;
-  //  Number of decoded (output) bytes.
-  uint32_t n_raw_bytes;
-  //  Number of encoded (source) bytes.
-  uint32_t n_payload_bytes;
-} lzvn_compressed_block_header;
-
 // MARK: - LZFSE encode/decode interfaces
 
 int lzfse_encode_init(lzfse_encoder_state *s);
@@ -391,12 +377,6 @@ int lzfse_encode_base(lzfse_encoder_state *s);
 int lzfse_encode_finish(lzfse_encoder_state *s);
 int lzfse_decode(lzfse_decoder_state *s);
 
-/*! @abstract Signed offset in buffers, stored on either 32 or 64 bits. */
-#if defined(_M_AMD64) || defined(__x86_64__) || defined(__arm64__)
-typedef int64_t lzvn_offset;
-#else
-typedef int32_t lzvn_offset;
-#endif
 
 // MARK: - LZFSE utility functions
 

@@ -30,7 +30,7 @@ LZFSE_LIB := $(BIN_DIR)/liblzfse.a
 LZFSE_CMD := $(BIN_DIR)/lzfse
 LIB_OBJS := $(OBJ_DIR)/lzfse_encode.o  $(OBJ_DIR)/lzfse_decode.o \
             $(OBJ_DIR)/lzfse_encode_base.o $(OBJ_DIR)/lzfse_decode_base.o \
-            $(OBJ_DIR)/lzvn_encode_base.o $(OBJ_DIR)/lzvn_decode_base.o \
+            $(OBJ_DIR)/lzvn_encode.o $(OBJ_DIR)/lzvn_decode.o \
             $(OBJ_DIR)/lzfse_fse.o
 CMD_OBJS := $(OBJ_DIR)/lzfse_main.o
 OBJS := $(LIB_OBJS) $(CMD_OBJS)

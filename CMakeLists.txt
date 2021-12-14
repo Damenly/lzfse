@@ -63,8 +63,8 @@ add_library(lzfse
   src/lzfse_encode.c
   src/lzfse_encode_base.c
   src/lzfse_fse.c
-  src/lzvn_decode_base.c
-  src/lzvn_encode_base.c)
+  src/lzvn_decode.c
+  src/lzvn_encode.c)
 lzfse_add_compiler_flags(lzfse -Wall -Wno-unknown-pragmas -Wno-unused-variable)
 
 add_executable(lzfse_cli

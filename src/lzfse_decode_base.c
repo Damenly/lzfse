@@ -20,7 +20,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 */
 
 #include "lzfse_internal.h"
-#include "lzvn_decode_base.h"
+#include "lzvn.h"
 
 /*! @abstract Decode an entry value from next bits of stream.
  *  Return \p value, and set \p *nbits to the number of bits to consume
