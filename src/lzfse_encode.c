@@ -25,6 +25,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "lzvn.h"
 #include "lzfse_internal.h"
 
+#if __linux__
+#include <linux/module.h>
+#endif
+
 size_t lzfse_encode_scratch_size() {
   size_t s1 = sizeof(lzfse_encoder_state);
   size_t s2 = lzvn_encode_scratch_size();
@@ -140,3 +144,8 @@ try_uncompressed:
   //  Otherwise, there's nothing we can do, so return zero.
   return 0;
 }
+
+EXPORT_SYMBOL(lzfse_encode_scratch_size);
+EXPORT_SYMBOL(lzfse_encode_buffer);
+MODULE_LICENSE("Dual BSD/GPL");
+MODULE_DESCRIPTION("Lzfse Compressor");

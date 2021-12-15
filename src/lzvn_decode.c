@@ -21,6 +21,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 // LZVN low-level decoder
 
+#if __linux__
+#include <linux/module.h>
+#endif
+
 #include "lzvn.h"
 #include "lzfse_internal.h"
 
@@ -739,3 +743,9 @@ size_t lzvn_decode_buffer(void *dst_buffer,
 
   return (size_t)(s->dst - (unsigned char *)dst_buffer); // bytes written
 }
+
+EXPORT_SYMBOL(lzvn_decode_scratch_size);
+EXPORT_SYMBOL(lzvn_decode_buffer);
+EXPORT_SYMBOL(lzvn_decode);
+MODULE_LICENSE("Dual BSD/GPL");
+MODULE_DESCRIPTION("Lzvn Decompressor");

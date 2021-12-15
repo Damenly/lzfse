@@ -24,6 +24,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "lzfse_internal.h"
 #include "lzfse_encode_tables.h"
 
+#if __linux__
+#include <linux/module.h>
+#endif
+
 /*! @abstract Get hash in range [0, LZFSE_ENCODE_HASH_VALUES-1] from 4 bytes in X. */
 static inline uint32_t hashX(uint32_t x) {
   return (x * 2654435761U) >>
@@ -839,3 +843,11 @@ int lzfse_encode_finish(lzfse_encoder_state *s) {
 
   return LZFSE_STATUS_OK;
 }
+
+EXPORT_SYMBOL(lzfse_encode_init);
+EXPORT_SYMBOL(lzfse_encode_translate);
+EXPORT_SYMBOL(lzfse_encode_base);
+EXPORT_SYMBOL(lzfse_encode_finish);
+
+MODULE_LICENSE("Dual BSD/GPL");
+MODULE_DESCRIPTION("Lzfse Compressor");

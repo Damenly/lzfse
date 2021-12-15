@@ -25,6 +25,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include <stddef.h>
 #include <stdint.h>
 
+#if 1
+#define EXPORT_SYMBOL(expr)
+#define MODULE_LICENSE(expr)
+#define MODULE_DESCRIPTION(expr)
+#endif
+
 size_t lzvn_decode_scratch_size(void);
 size_t lzvn_encode_scratch_size(void);
 size_t lzvn_encode_buffer(void *dst, size_t dst_size,

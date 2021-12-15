@@ -19,6 +19,10 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABI
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#if __linux__
+#include <linux/module.h>
+#endif
+
 #include "lzfse_internal.h"
 #include "lzvn.h"
 
@@ -635,3 +639,7 @@ int lzfse_decode(lzfse_decoder_state *s) {
 
   return LZFSE_STATUS_OK;
 }
+
+EXPORT_SYMBOL(lzfse_decode);
+MODULE_LICENSE("Dual BSD/GPL");
+MODULE_DESCRIPTION("Lzfse Decompressor");

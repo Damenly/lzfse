@@ -21,6 +21,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 // LZVN low-level encoder
 
+#if __linux__
+#include <linux/module.h>
+#endif
+
 #include "lzvn.h"
 #include "lzfse_internal.h"
 
@@ -597,3 +601,9 @@ size_t lzvn_encode_buffer(void *dst, size_t dst_size,
     return 0;      // could not encode entire input stream = fail
   return dst_used; // return encoded size
 }
+
+EXPORT_SYMBOL(lzvn_encode_scratch_size);
+EXPORT_SYMBOL(lzvn_encode_buffer);
+EXPORT_SYMBOL(lzvn_encode);
+MODULE_LICENSE("Dual BSD/GPL");
+MODULE_DESCRIPTION("Lzvn Compressor");

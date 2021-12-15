@@ -22,8 +22,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #ifndef LZFSE_H
 #define LZFSE_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include <linux/stddef.h>
 
 #include "lzvn.h"
 

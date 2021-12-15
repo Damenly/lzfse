@@ -21,6 +21,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 // LZFSE decode API
 
+#if __linux__
+#include <linux/module.h>
+#endif
+
 #include "lzfse.h"
 #include "lzfse_internal.h"
 
@@ -49,3 +53,7 @@ size_t lzfse_decode_buffer(uint8_t *dst_buffer,
   return (size_t)(s->dst - dst_buffer); // bytes written
 }
 
+EXPORT_SYMBOL(lzfse_decode_scratch_size);
+EXPORT_SYMBOL(lzfse_decode_buffer);
+MODULE_LICENSE("Dual BSD/GPL");
+MODULE_DESCRIPTION("Lzfse Decompressor");
