@@ -35,8 +35,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "lzfse.h"
 #include "lzfse_fse.h"
 
-#define uintmax_t uint64_t
-
 #if defined(_MSC_VER) && !defined(__clang__)
 #  define LZFSE_INLINE __forceinline
 #  define __builtin_expect(X, Y) (X)
@@ -239,7 +237,7 @@ LZFSE_INLINE void copy16(void *dst, const void *src) {
 
 /*! @abstract Extracts \p width bits from \p container, starting with \p lsb; if
  * we view \p container as a bit array, we extract \c container[lsb:lsb+width]. */
-LZFSE_INLINE uintmax_t extract(uintmax_t container, unsigned lsb,
+LZFSE_INLINE uint64_t extract(uint64_t container, unsigned lsb,
                                unsigned width) {
   static const size_t container_width = sizeof container * 8;
   assert(lsb < container_width);
@@ -247,7 +245,7 @@ LZFSE_INLINE uintmax_t extract(uintmax_t container, unsigned lsb,
   assert(lsb + width <= container_width);
   if (width == container_width)
     return container;
-  return (container >> lsb) & (((uintmax_t)1 << width) - 1);
+  return (container >> lsb) & (((uint64_t)1 << width) - 1);
 }
 
 /*! @abstract Inserts \p width bits from \p data into \p container, starting with \p lsb.
@@ -258,7 +256,7 @@ LZFSE_INLINE uintmax_t extract(uintmax_t container, unsigned lsb,
  * container[lsb+width:] is unchanged
  * @endcode
  */
-LZFSE_INLINE uintmax_t insert(uintmax_t container, uintmax_t data, unsigned lsb,
+LZFSE_INLINE uint64_t insert(uint64_t container, uint64_t data, unsigned lsb,
                               unsigned width) {
   static const size_t container_width = sizeof container * 8;
   assert(lsb < container_width);
@@ -266,7 +264,7 @@ LZFSE_INLINE uintmax_t insert(uintmax_t container, uintmax_t data, unsigned lsb,
   assert(lsb + width <= container_width);
   if (width == container_width)
     return container;
-  uintmax_t mask = ((uintmax_t)1 << width) - 1;
+  uint64_t mask = ((uint64_t)1 << width) - 1;
   return (container & ~(mask << lsb)) | (data & mask) << lsb;
 }
 
