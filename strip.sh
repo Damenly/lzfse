@@ -21,7 +21,7 @@ find lzfse_strip -name "*.[ch]" -exec sed -i 's/#include <limits.h>//g'  {} +
 
 find lzfse_strip -name "*.[ch]" -exec sed -i 's/#include <assert.h>//g'  {} +
 
-find lzfse_strip -name "*.[ch]" -exec sed -i 's/assert*//g'  {} +
+find lzfse_strip -name "*.[ch]" -exec sed -i 's/assert.*//g'  {} +
 
 find lzfse_strip -name "*.[ch]" -exec sed -i 's/"lzfse.h"/<linux\/lzfse.h>/g'  {} +
 
