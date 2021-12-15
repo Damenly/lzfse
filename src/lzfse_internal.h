@@ -35,6 +35,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 #include "lzfse.h"
 #include "lzfse_fse.h"
 
+#define uintmax_t uint64_t
+
 #if defined(_MSC_VER) && !defined(__clang__)
 #  define LZFSE_INLINE __forceinline
 #  define __builtin_expect(X, Y) (X)
