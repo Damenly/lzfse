@@ -28,16 +28,18 @@ OBJ_DIR := $(BUILD_DIR)/obj
 
 LZFSE_LIB := $(BIN_DIR)/liblzfse.a
 LZFSE_CMD := $(BIN_DIR)/lzfse
+LZVN_CMD := $(BIN_DIR)/lzvn
 LIB_OBJS := $(OBJ_DIR)/lzfse_encode.o  $(OBJ_DIR)/lzfse_decode.o \
             $(OBJ_DIR)/lzfse_encode_base.o $(OBJ_DIR)/lzfse_decode_base.o \
             $(OBJ_DIR)/lzvn_encode.o $(OBJ_DIR)/lzvn_decode.o \
             $(OBJ_DIR)/lzfse_fse.o
 CMD_OBJS := $(OBJ_DIR)/lzfse_main.o
+LZVN_OBJS := $(OBJ_DIR)/lzvn_main.o
 OBJS := $(LIB_OBJS) $(CMD_OBJS)
 
 CFLAGS := -Os -Wall -Wno-unknown-pragmas -Wno-unused-variable -DNDEBUG -D_POSIX_C_SOURCE -std=gnu89 -fvisibility=hidden
 
-all: $(LZFSE_LIB) $(LZFSE_CMD) $(OBJS)
+all: $(LZFSE_LIB) $(LZFSE_CMD) $(OBJS) $(LZVN_CMD)
 
 install: $(LZFSE_LIB) $(LZFSE_CMD)
 	@[ -d $(INSTALL_PREFIX)/include ] || mkdir -p $(INSTALL_PREFIX)/include
@@ -53,6 +55,10 @@ $(LZFSE_LIB): $(LIB_OBJS)
 	ar rvs $@ $(OBJ_DIR)/liblzfse_master.o
 
 $(LZFSE_CMD): $(CMD_OBJS) $(LZFSE_LIB)
+	@[ -d $(BIN_DIR) ] || mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $@ $(CMD_OBJS) $(LZFSE_LIB)
+
+$(LZVN_CMD): $(LZVN_OBJS) $(LZFSE_LIB)
 	@[ -d $(BIN_DIR) ] || mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $@ $(CMD_OBJS) $(LZFSE_LIB)
 

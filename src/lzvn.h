@@ -31,7 +31,8 @@ size_t lzvn_encode_buffer(void *dst, size_t dst_size,
 			  const void *src, size_t src_size,
 			  void *work);
 size_t lzvn_decode_buffer(void *dst, size_t dst_size,
-			  const void *src, size_t src_size);
+			  const void *src, size_t src_size,
+			  void *work);
 
 // MARK: - LZVN encode/decode interfaces
 
