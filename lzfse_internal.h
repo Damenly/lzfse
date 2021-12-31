@@ -27,9 +27,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 //  break the compressor, or result in a compressed data format that is
 //  incompatible.
 
-#include <limits.h>
-#include <stddef.h>
-#include <stdint.h>
+
+#include <linux/stddef.h>
+#include <linux/types.h>
 
 #include "lzvn.h"
 #include "lzfse.h"
@@ -240,9 +240,9 @@ LZFSE_INLINE void copy16(void *dst, const void *src) {
 LZFSE_INLINE uint64_t extract(uint64_t container, unsigned lsb,
                                unsigned width) {
   static const size_t container_width = sizeof container * 8;
-  assert(lsb < container_width);
-  assert(width > 0 && width <= container_width);
-  assert(lsb + width <= container_width);
+  
+  
+  
   if (width == container_width)
     return container;
   return (container >> lsb) & (((uint64_t)1 << width) - 1);
@@ -259,9 +259,9 @@ LZFSE_INLINE uint64_t extract(uint64_t container, unsigned lsb,
 LZFSE_INLINE uint64_t insert(uint64_t container, uint64_t data, unsigned lsb,
                               unsigned width) {
   static const size_t container_width = sizeof container * 8;
-  assert(lsb < container_width);
-  assert(width > 0 && width <= container_width);
-  assert(lsb + width <= container_width);
+  
+  
+  
   if (width == container_width)
     return container;
   uint64_t mask = ((uint64_t)1 << width) - 1;

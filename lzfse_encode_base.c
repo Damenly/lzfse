@@ -38,8 +38,8 @@ static inline uint32_t hashX(uint32_t x) {
  * at bit offset OFFSET.
  * V is assumed to fit on nbits bits. */
 static inline uint64_t setField(uint32_t v, int offset, int nbits) {
-  assert(offset + nbits < 64 && offset >= 0 && nbits <= 32);
-  assert(nbits == 32 || (v < (1U << nbits)));
+  (offset + nbits < 64 && offset >= 0 && nbits <= 32);
+  (nbits == 32 || (v < (1U << nbits)));
   return ((uint64_t)v << (uint64_t)offset);
 }
 
@@ -131,7 +131,7 @@ lzfse_encode_v1_freq_table(lzfse_compressed_block_header_v2 *out,
     // Encode one value to accum
     int nbits = 0;
     uint32_t bits = lzfse_encode_v1_freq_value(src[i], &nbits);
-    assert(bits < (1 << nbits));
+    (bits < (1 << nbits));
     accum |= bits << accum_nbits;
     accum_nbits += nbits;
 
@@ -616,7 +616,7 @@ int lzfse_encode_init(lzfse_encoder_state *s) {
  * Offsets in \p src are updated backwards to point to the same positions.
  * @return  LZFSE_STATUS_OK */
 int lzfse_encode_translate(lzfse_encoder_state *s, lzfse_offset delta) {
-  assert(delta >= 0);
+  (delta >= 0);
   if (delta == 0)
     return LZFSE_STATUS_OK; // OK
 

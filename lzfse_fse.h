@@ -25,11 +25,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #pragma once
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+
+#include <linux/stddef.h>
+#include <linux/types.h>
+
+#include <linux/string.h>
 
 #include "lzfse.h"
 
@@ -145,8 +145,8 @@ FSE_INLINE void fse_out_flush64(fse_out_stream64 *s, uint8_t **pbuf) {
   s->accum >>= nbits; // remove nbits
   s->accum_nbits -= nbits;
 
-  assert(s->accum_nbits >= 0 && s->accum_nbits <= 7);
-  assert(s->accum_nbits == 64 || (s->accum >> s->accum_nbits) == 0);
+  (s->accum_nbits >= 0 && s->accum_nbits <= 7);
+  (s->accum_nbits == 64 || (s->accum >> s->accum_nbits) == 0);
 }
 
 /*! @abstract Write full bytes from the accumulator to output buffer, ensuring
@@ -166,8 +166,8 @@ FSE_INLINE void fse_out_flush32(fse_out_stream32 *s, uint8_t **pbuf) {
   s->accum >>= nbits; // remove nbits
   s->accum_nbits -= nbits;
 
-  assert(s->accum_nbits >= 0 && s->accum_nbits <= 7);
-  assert(s->accum_nbits == 32 || (s->accum >> s->accum_nbits) == 0);
+  (s->accum_nbits >= 0 && s->accum_nbits <= 7);
+  (s->accum_nbits == 32 || (s->accum >> s->accum_nbits) == 0);
 }
 
 /*! @abstract Write the last bytes from the accumulator to output buffer,
@@ -187,7 +187,7 @@ FSE_INLINE void fse_out_finish64(fse_out_stream64 *s, uint8_t **pbuf) {
   s->accum = 0; // remove nbits
   s->accum_nbits -= nbits;
 
-  assert(s->accum_nbits >= -7 && s->accum_nbits <= 0);
+  (s->accum_nbits >= -7 && s->accum_nbits <= 0);
 }
 
 /*! @abstract Write the last bytes from the accumulator to output buffer,
@@ -207,7 +207,7 @@ FSE_INLINE void fse_out_finish32(fse_out_stream32 *s, uint8_t **pbuf) {
   s->accum = 0; // remove nbits
   s->accum_nbits -= nbits;
 
-  assert(s->accum_nbits >= -7 && s->accum_nbits <= 0);
+  (s->accum_nbits >= -7 && s->accum_nbits <= 0);
 }
 
 /*! @abstract Accumulate \c n bits \c b to output stream \c s. We \b must have:
@@ -219,8 +219,8 @@ FSE_INLINE void fse_out_push64(fse_out_stream64 *s, fse_bit_count n,
   s->accum |= b << s->accum_nbits;
   s->accum_nbits += n;
 
-  assert(s->accum_nbits >= 0 && s->accum_nbits <= 64);
-  assert(s->accum_nbits == 64 || (s->accum >> s->accum_nbits) == 0);
+  (s->accum_nbits >= 0 && s->accum_nbits <= 64);
+  (s->accum_nbits == 64 || (s->accum >> s->accum_nbits) == 0);
 }
 
 /*! @abstract Accumulate \c n bits \c b to output stream \c s. We \b must have:
@@ -232,18 +232,18 @@ FSE_INLINE void fse_out_push32(fse_out_stream32 *s, fse_bit_count n,
   s->accum |= b << s->accum_nbits;
   s->accum_nbits += n;
 
-  assert(s->accum_nbits >= 0 && s->accum_nbits <= 32);
-  assert(s->accum_nbits == 32 || (s->accum >> s->accum_nbits) == 0);
+  (s->accum_nbits >= 0 && s->accum_nbits <= 32);
+  (s->accum_nbits == 32 || (s->accum >> s->accum_nbits) == 0);
 }
 
 #if FSE_IOSTREAM_64
 #define DEBUG_CHECK_INPUT_STREAM_PARAMETERS                                    \
-  assert(s->accum_nbits >= 56 && s->accum_nbits < 64);                         \
-  assert((s->accum >> s->accum_nbits) == 0);
+  (s->accum_nbits >= 56 && s->accum_nbits < 64);                         \
+  ((s->accum >> s->accum_nbits) == 0);
 #else
 #define DEBUG_CHECK_INPUT_STREAM_PARAMETERS                                    \
-  assert(s->accum_nbits >= 24 && s->accum_nbits < 32);                         \
-  assert((s->accum >> s->accum_nbits) == 0);
+  (s->accum_nbits >= 24 && s->accum_nbits < 32);                         \
+  ((s->accum >> s->accum_nbits) == 0);
 #endif
 
 /*! @abstract   Initialize the fse input stream so that accum holds between 56
@@ -360,7 +360,7 @@ FSE_INLINE int fse_in_checked_flush32(fse_in_stream32 *s, const uint8_t **pbuf,
 
 /*! @abstract Pull n bits out of the fse stream object. */
 FSE_INLINE uint64_t fse_in_pull64(fse_in_stream64 *s, fse_bit_count n) {
-  assert(n >= 0 && n <= s->accum_nbits);
+  (n >= 0 && n <= s->accum_nbits);
   s->accum_nbits -= n;
   uint64_t result = s->accum >> s->accum_nbits;
   s->accum = fse_mask_lsb64(s->accum, s->accum_nbits);
@@ -369,7 +369,7 @@ FSE_INLINE uint64_t fse_in_pull64(fse_in_stream64 *s, fse_bit_count n) {
 
 /*! @abstract Pull n bits out of the fse stream object. */
 FSE_INLINE uint32_t fse_in_pull32(fse_in_stream32 *s, fse_bit_count n) {
-  assert(n >= 0 && n <= s->accum_nbits);
+  (n >= 0 && n <= s->accum_nbits);
   s->accum_nbits -= n;
   uint32_t result = s->accum >> s->accum_nbits;
   s->accum = fse_mask_lsb32(s->accum, s->accum_nbits);

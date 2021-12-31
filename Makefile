@@ -1,7 +1,7 @@
-# Copyright (c) 2015-2016, Apple Inc. All rights reserved.
+# # Copyright (c) 2015-2016, Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
-# are permitted provided that the following conditions are met:  
+# are permitted provided that the following conditions are met:
 #
 # 1.  Redistributions of source code must retain the above copyright notice,
 #     this list of conditions and the following disclaimer.
@@ -19,52 +19,19 @@
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
 
-INSTALL_PREFIX ?= /usr/local
+CONFIG_LZFSE=m
 
-BUILD_DIR := ./build
-BIN_DIR := $(BUILD_DIR)/bin
-OBJ_DIR := $(BUILD_DIR)/obj
+ccflags-y += -O3
+ccflags-y += -Wno-declaration-after-statement
+ccflags-y += -Wno-unused-const-variable
+ccflags-y += -Wno-old-style-definition
+ccflags-y += -Wno-unused-value
+ccflags-y += -Wno-unused-label
 
-LZFSE_LIB := $(BIN_DIR)/liblzfse.a
-LZFSE_CMD := $(BIN_DIR)/lzfse
-LZVN_CMD := $(BIN_DIR)/lzvn
-LIB_OBJS := $(OBJ_DIR)/lzfse_encode.o  $(OBJ_DIR)/lzfse_decode.o \
-            $(OBJ_DIR)/lzfse_encode_base.o $(OBJ_DIR)/lzfse_decode_base.o \
-            $(OBJ_DIR)/lzvn_encode.o $(OBJ_DIR)/lzvn_decode.o \
-            $(OBJ_DIR)/lzfse_fse.o
-CMD_OBJS := $(OBJ_DIR)/lzfse_main.o
-LZVN_OBJS := $(OBJ_DIR)/lzvn_main.o
-OBJS := $(LIB_OBJS) $(CMD_OBJS)
-
-CFLAGS := -Os -Wall -Wno-unknown-pragmas -Wno-unused-variable -DNDEBUG -D_POSIX_C_SOURCE -std=gnu89 -fvisibility=hidden
-
-all: $(LZFSE_LIB) $(LZFSE_CMD) $(OBJS) $(LZVN_CMD)
-
-install: $(LZFSE_LIB) $(LZFSE_CMD)
-	@[ -d $(INSTALL_PREFIX)/include ] || mkdir -p $(INSTALL_PREFIX)/include
-	@[ -d $(INSTALL_PREFIX)/lib ] || mkdir -p $(INSTALL_PREFIX)/lib
-	@[ -d $(INSTALL_PREFIX)/bin ] || mkdir -p $(INSTALL_PREFIX)/bin
-	install ./src/lzfse.h $(INSTALL_PREFIX)/include/lzfse.h
-	install $(LZFSE_LIB) $(INSTALL_PREFIX)/lib/liblzfse.a
-	install $(LZFSE_CMD) $(INSTALL_PREFIX)/bin/lzfse
-
-$(LZFSE_LIB): $(LIB_OBJS)
-	@[ -d $(BIN_DIR) ] || mkdir -p $(BIN_DIR)
-	$(LD) -r -o $(OBJ_DIR)/liblzfse_master.o $(LIB_OBJS)
-	ar rvs $@ $(OBJ_DIR)/liblzfse_master.o
-
-$(LZFSE_CMD): $(CMD_OBJS) $(LZFSE_LIB)
-	@[ -d $(BIN_DIR) ] || mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $(CMD_OBJS) $(LZFSE_LIB)
-
-$(LZVN_CMD): $(LZVN_OBJS) $(LZFSE_LIB)
-	@[ -d $(BIN_DIR) ] || mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $(CMD_OBJS) $(LZFSE_LIB)
-
-clean:
-	/bin/rm -rf $(BUILD_DIR)
-
-$(OBJ_DIR)/%.o: src/%.c
-	@[ -d $(OBJ_DIR) ] || mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+obj-$(CONFIG_LZFSE) = lzfse.o
+lzfse-y := lzfse_encode.o lzfse_fse.o lzfse_encode_base.o \
+		   lzfse_decode.o lzfse_fse.o lzfse_decode_base.o \
+					lzvn_encode.o \
+					lzvn_decode.o

@@ -59,8 +59,8 @@ void fse_init_encoder_table(int nstates, int nsymbols,
 int fse_init_decoder_table(int nstates, int nsymbols,
                            const uint16_t *freq,
                            int32_t *t) {
-  assert(nsymbols <= 256);
-  assert(fse_check_freq(freq, nsymbols, nstates) == 0);
+  (nsymbols <= 256);
+  (fse_check_freq(freq, nsymbols, nstates) == 0);
   int n_clz = __builtin_clz(nstates);
   int sum_of_freq = 0;
   int i, j, j0, k;
@@ -114,8 +114,8 @@ void fse_init_value_decoder_table(int nstates, int nsymbols,
                                   const uint8_t *symbol_vbits,
                                   const int32_t *symbol_vbase,
                                   fse_value_decoder_entry *t) {
-  assert(nsymbols <= 256);
-  assert(fse_check_freq(freq, nsymbols, nstates) == 0);
+  (nsymbols <= 256);
+  (fse_check_freq(freq, nsymbols, nstates) == 0);
   int i, j;
   int n_clz = __builtin_clz(nstates);
 

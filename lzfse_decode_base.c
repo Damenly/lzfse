@@ -57,7 +57,7 @@ static inline int lzfse_decode_v1_freq_value(uint32_t bits, int *nbits) {
  *  If we number the bits of \p v from 0 (least significant) to 63 (most
  *  significant), the result is bits \p offset to \p offset+nbits-1. */
 static inline uint32_t get_field(uint64_t v, int offset, int nbits) {
-  assert(offset + nbits < 64 && offset >= 0 && nbits <= 32);
+  (offset + nbits < 64 && offset >= 0 && nbits <= 32);
   if (nbits == 32)
     return (uint32_t)(v >> offset);
   return (uint32_t)((v >> offset) & ((1 << nbits) - 1));
@@ -172,9 +172,9 @@ static int lzfse_decode_lmd(lzfse_decoder_state *s) {
   int32_t M = bs->m_value;
   int32_t D = bs->d_value;
 
-  assert(l_state < LZFSE_ENCODE_L_STATES);
-  assert(m_state < LZFSE_ENCODE_M_STATES);
-  assert(d_state < LZFSE_ENCODE_D_STATES);
+  (l_state < LZFSE_ENCODE_L_STATES);
+  (m_state < LZFSE_ENCODE_M_STATES);
+  (d_state < LZFSE_ENCODE_D_STATES);
 
   //  Number of bytes remaining in the destination buffer, minus 32 to
   //  provide a margin of safety for using overlarge copies on the fast path.
@@ -199,7 +199,7 @@ static int lzfse_decode_lmd(lzfse_decoder_state *s) {
       return LZFSE_STATUS_ERROR;
     }
     L = fse_value_decode(&l_state, bs->l_decoder, &in);
-    assert(l_state < LZFSE_ENCODE_L_STATES);
+    (l_state < LZFSE_ENCODE_L_STATES);
     if ((lit + L) >= (bs->literals + LZFSE_LITERALS_PER_BLOCK + 64)) {
       return LZFSE_STATUS_ERROR;
     }
@@ -208,13 +208,13 @@ static int lzfse_decode_lmd(lzfse_decoder_state *s) {
       return LZFSE_STATUS_ERROR;
     }
     M = fse_value_decode(&m_state, bs->m_decoder, &in);
-    assert(m_state < LZFSE_ENCODE_M_STATES);
+    (m_state < LZFSE_ENCODE_M_STATES);
     res = fse_in_flush2(&in, &src, src_start);
     if (res) {
       return LZFSE_STATUS_ERROR;
     }
     int32_t new_d = fse_value_decode(&d_state, bs->d_decoder, &in);
-    assert(d_state < LZFSE_ENCODE_D_STATES);
+    (d_state < LZFSE_ENCODE_D_STATES);
     D = new_d ? new_d : D;
     symbols--;
 

@@ -125,6 +125,7 @@ void lzvn_decode(lzvn_decoder_state *state) {
 //  No error checking happens in the first stage, except for ensuring that
 //  the source has enough length to represent the full opcode before
 //  reading past the first byte.
+sml_d:
 #if !HAVE_LABELS_AS_VALUES
   case 0:
   case 1:
@@ -267,6 +268,7 @@ void lzvn_decode(lzvn_decoder_state *state) {
   D = (size_t)extract(opc, 0, 3) << 8 | src_ptr[1];
   goto copy_literal_and_match;
 
+med_d:
 #if !HAVE_LABELS_AS_VALUES
   case 160:
   case 161:
@@ -316,6 +318,7 @@ void lzvn_decode(lzvn_decoder_state *state) {
   D = (size_t)extract(opc23, 2, 14);
   goto copy_literal_and_match;
 
+lrg_d:
 #if !HAVE_LABELS_AS_VALUES
   case 7:
   case 15:
@@ -351,6 +354,7 @@ void lzvn_decode(lzvn_decoder_state *state) {
   D = load2(&src_ptr[1]);
   goto copy_literal_and_match;
 
+pre_d:
 #if !HAVE_LABELS_AS_VALUES
   case 70:
   case 78:
@@ -488,6 +492,7 @@ copy_match:
 //  to encode is the match length. We are able to reuse the match copy
 //  sequence from the literal and match opcodes to perform the actual
 //  copy implementation.
+sml_m:
 #if !HAVE_LABELS_AS_VALUES
   case 241:
   case 242:
@@ -516,6 +521,7 @@ copy_match:
   PTR_LEN_INC(src_ptr, src_len, opc_len);
   goto copy_match;
 
+lrg_m:
 #if !HAVE_LABELS_AS_VALUES
   case 240:
 #endif
@@ -537,6 +543,7 @@ copy_match:
 //  These two opcodes (lrg_l and sml_l) encode only a literal.  There is no
 //  match length or match distance to worry about (but we need to *not*
 //  touch D, as it must be preserved between opcodes).
+sml_l:
 #if !HAVE_LABELS_AS_VALUES
   case 225:
   case 226:
@@ -561,6 +568,7 @@ copy_match:
   L = (size_t)extract(opc, 0, 4);
   goto copy_literal;
 
+lrg_l:
 #if !HAVE_LABELS_AS_VALUES
   case 224:
 #endif
@@ -628,6 +636,7 @@ copy_literal:
 
 // ===============================================================
 // Other opcodes
+nop:
 #if !HAVE_LABELS_AS_VALUES
   case 14:
   case 22:
@@ -644,6 +653,7 @@ copy_literal:
   break;
 #endif
 
+eos:
 #if !HAVE_LABELS_AS_VALUES
   case 6:
 #endif
@@ -658,6 +668,7 @@ copy_literal:
 
 // ===============================================================
 // Return on error
+udef:
 #if !HAVE_LABELS_AS_VALUES
   case 30:
   case 38:

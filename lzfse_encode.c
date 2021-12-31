@@ -128,7 +128,7 @@ size_t lzfse_encode_buffer(uint8_t *dst_buffer,
 try_uncompressed:
   //  Compression failed for some reason.  If we can fit the data into the
   //  output buffer uncompressed, go ahead and do that instead.
-  if (original_size + 12 <= dst_size && original_size < INT32_MAX) {
+  if (original_size + 12 <= dst_size && original_size < S32_MAX) {
     uncompressed_block_header header = {.magic = LZFSE_UNCOMPRESSED_BLOCK_MAGIC,
                                         .n_raw_bytes = (uint32_t)src_size};
     uint8_t *dst_end = dst_buffer;
